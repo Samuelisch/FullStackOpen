@@ -1,0 +1,20 @@
+note over browser: 
+When submit button 
+is clicked
+end note
+
+browser->server: HTTP POST to new_note_spa as JSON containing content and timestamp
+server-->browser: status code 201 created
+
+note over browser:
+spa.js's event handler
+prevents the default 
+handling of form submit.
+end note
+
+note over browser:
+reates a new note, adds it to the notes 
+list with the command notes.push(note), 
+rerenders the note list on the page and 
+sends the new note to the server.
+end note
