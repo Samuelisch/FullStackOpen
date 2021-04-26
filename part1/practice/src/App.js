@@ -1,31 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
 
-const Hello = ({name, age}) => {
-  const bornYear = () => new Date().getFullYear() - age
+const History = ({allClicks}) => {
+  if (!allClicks.length) {
+    return (
+      <div>
+        The app is waiting for a button press
+      </div>
+    )
+  }
   return (
     <div>
-      <p>
-        Hello {name}, you are {age} years old.
-      </p>
-      <p>
-        You were probably born in {bornYear()}
-      </p>
+      You've clicked on: {allClicks.join(' ')}
     </div>
   )
 }
 
 const App = () => {
-  const name = 'Peter'
-  const age = 10
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
+  const [allClicks, setAll] = useState([])
+
+  const handleLeftClick = () => {
+    setAll(['L'].concat(allClicks))
+    setLeft(left + 1)
+  }
+
+  const handleRightClick = () => {
+    setAll(['R'].concat(allClicks))
+    setRight(right + 1)
+  }
+
+  const Button = ({handleClick, text}) => (
+    <button onClick={handleClick}>
+      {text}
+    </button>
+  )
 
   return (
     <div>
-      <h1>Greetings</h1>
-      <Hello name="Maya" age={26 + 10} />
-      <Hello name={name} age={age} />
+      {left}{' '}
+      <Button handleClick={handleLeftClick} text='left' />
+      <Button handleClick={handleRightClick} text='right' />
+      {' '}{right}
+      <History allClicks = {allClicks}/>
     </div>
   )
 }
 
-export default App;
+export default App
