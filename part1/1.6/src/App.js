@@ -1,55 +1,55 @@
 import React, { useState } from 'react'
 
-//button function to handle all three buttons, and their handle
-const Button = ({handleClick, text}) => (
-  <button onClick={handleClick}>
-    {text}
-  </button>
-)
 
-const Statistic = ({text, value}) => {
-  return(
-    <tr>
-      <td>{text}</td>
-      <td>{value}</td>
-    </tr>
-  )
-}
-
-const Statistics = (props) => {
-  let all = props.good + props.neutral + props.bad
-  if (all === 0) {
+const MostVotes = ({maxVotes, maxAnecdote}) => {
+  if (maxVotes > 0) {
     return (
-      <p>No feedback given</p>
+      <div>
+        <p>{maxAnecdote}</p>
+        <p>has {maxVotes} votes</p>
+      </div>
     )
   }
-  return(
-    <div>
-      <Statistic text='Good' value={props.good} />
-      <Statistic text='Neutral' value={props.neutral} />
-      <Statistic text='Bad' value={props.bad} />
-      <Statistic text='All' value={all} />
-      <Statistic text='Average' value={props.points / all}/>
-      <Statistic text='Positive' value={props.good / all * 100 + '%'}/>
-    </div>
+  return (
+    <div />
   )
 }
 
 const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-  const [points, setPoints] = useState(0)
+  const anecdotes = [
+    'If it hurts, do it more often',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
+  ]
+   
+  const [selected, setSelected] = useState(0)
+  const [votesArr, setVotesArr] = useState(new Array(anecdotes.length).fill(0))
+
+  const randomSelect = () => {
+    setSelected(Math.floor(Math.random() * anecdotes.length))
+  }
+
+  const addVotes = () => {
+    let copy = [...votesArr]
+    copy[selected] += 1
+    setVotesArr(copy)
+  }
+
+  let maxVotes = Math.max(...votesArr)
+  let maxAnecdote = anecdotes[votesArr.indexOf(maxVotes)]
 
   return (
     <div>
-      <h1>Feedback Form</h1>
-      <Button handleClick={() => {setGood(good + 1); setPoints(points + 1)}} text={'Good'}/>
-      <Button handleClick={() => setNeutral(neutral + 1)} text={'Neutral'}/>
-      <Button handleClick={() => {setBad(bad + 1); setPoints(points - 1)}} text={'Bad'}/>
-      <h2>Statistics:</h2>
-      <Statistics good={good} bad={bad} neutral={neutral} points={points}/>
+      <h2>Anecdote of the day:</h2>
+      <p>{anecdotes[selected]}</p>
+      <p>has {votesArr[selected]} votes</p>
+      <button onClick={() => addVotes()}>vote</button>
+      <button onClick={() => randomSelect()}>next anecdote</button>
+      <h2>Anecdote with most votes:</h2>
+      <MostVotes maxVotes={maxVotes} maxAnecdote={maxAnecdote} />
     </div>
   )
 }
