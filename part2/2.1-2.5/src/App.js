@@ -1,5 +1,5 @@
 import React from 'react'
-import Course from './modules/Course'
+import Course from './Course'
 
 const App = () => {
   const courses = [
