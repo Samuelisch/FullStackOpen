@@ -1,0 +1,26 @@
+note over browser: 
+When submit button 
+is clicked
+end note
+
+browser->server: HTTP POST to server address (new_note)
+server-->browser: Code 302 - redirects browser to do new HTTP GET defined in header's location
+
+note over browser: Browser reloads
+browser->server: HTTP GET style sheet (main.css)
+server-->browser: main.css
+browser->server: HTTP GET JavaScript code (main.js)
+server-->browser: main.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET raw data of the notes (data.json)
+server-->browser: data.json
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
