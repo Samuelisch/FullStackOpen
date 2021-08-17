@@ -1,19 +1,26 @@
 import React from 'react'
+import Weather from './weather'
 
-const PersonForm = ({nameChange, numChange, btnClick}) => {
+const Info = ({ selected }) => {
   return (
-    <form>
-      <div>
-          name: <input onChange={nameChange} />
-        </div>
-        <div>
-          number: <input onChange={numChange} />
-        </div>
-        <div>
-          <button type="submit" onClick={btnClick}>add</button>
-        </div>
-    </form>
+    <div>
+      <h3>{selected.name}</h3>
+      <p>capital: {selected.capital}</p>
+      <p>population: {selected.population}</p>
+
+      <h3>Languages</h3>
+      <ul>
+        {selected.languages.map(language => {
+          return (
+            <li key={language.iso639_1}>{language.name}</li>
+          )
+        })}
+      </ul>
+      
+      <img src={selected.flag} alt="country's flag" width="200px" height="auto"></img>
+      <Weather country={selected.name} />
+    </div>
   )
 }
 
-export default PersonForm;
+export default Info;

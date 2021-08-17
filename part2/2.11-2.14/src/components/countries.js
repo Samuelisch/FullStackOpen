@@ -1,6 +1,8 @@
 import React from 'react'
+import Info from './countryInfo'
+import Country from './country'
 
-const Countries = ({showing}) => {
+const Countries = ({ showing, setSearch }) => {
   if (showing.length > 10) {
     return (
       <div>Too many matches, specify another filter</div>
@@ -10,23 +12,10 @@ const Countries = ({showing}) => {
   if (showing.length === 1) {
     return (
       <>
-        {showing.map(country => {
+        {showing.map(selected => {
           return (
-            <div key={country.numericCode}>
-              <h3>{country.name}</h3>
-              <p>capital: {country.capital}</p>
-              <p>population: {country.population}</p>
-
-              <h3>Languages</h3>
-              <ul>
-                {country.languages.map(language => {
-                  return (
-                    <li key={language.iso639_1}>{language.name}</li>
-                  )
-                })}
-              </ul>
-              
-              <img src={country.flag} alt="country's flag" width="200px" height="auto"></img>
+            <div key={selected.numericCode}>
+              <Info selected={selected} />
             </div>
           )
         })}
@@ -35,13 +24,15 @@ const Countries = ({showing}) => {
   }
 
   return (
-    <div>
+    <>
       {showing.map(country => {
         return (
-          <div key={country.numericCode}>{country.name}</div>
+          <div key={country.numericCode}>
+            <Country name={country.name} setSearch={setSearch} />
+          </div>
         )
       })}
-    </div>
+    </>
   )
 }
 
