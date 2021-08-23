@@ -1,21 +1,14 @@
-const Notification = ({ notif, error }) => {
-  if (notif === '' && error === '') {
+const Notification = ({ notif }) => {
+  if (notif === null) {
     return null
   }
+  console.log(notif.type, notif.text)
 
-  if (!error) {
-    return (
-      <div className="notif msg">
-        {notif}
-      </div>
-    ) 
-  } else {
-    return (
-      <div className="error msg">
-        {error}
-      </div>
-    )
-  }
+  return (
+    <div className={notif.type}>
+      {notif.text}
+    </div>
+  )
 }
 
 export default Notification;
