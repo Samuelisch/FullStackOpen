@@ -3,6 +3,7 @@ import Filter from './components/filter'
 import Person from './components/person'
 import PersonForm from './components/personform'
 import server from './components/server'
+import Notification from './components/notifications'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
@@ -10,6 +11,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('');
   const [ newNum, setNewNum ] = useState('');
   const [ showAll, setShowAll ] = useState(true);
+  const [ notifMsg, setNotifMsg ] = useState(null);
 
   useEffect(() => {
     server.getAll()
@@ -18,6 +20,13 @@ const App = () => {
       setPersons(people)
     })
   }, [])
+
+  const setNotifMsgInfo = (text, type="success") => {
+    setNotifMsg({ text, type })
+    setTimeout(() => {
+      setNotifMsg(null)
+    }, 5000)
+  }
 
   const handleSearchInputChange = (e) => {
     setShowAll(false);
@@ -42,7 +51,11 @@ const App = () => {
 
   const checkDuplicate = (name) => {
     const existingPersons = persons.find(person => person.name === name)
-    return existingPersons.id
+    if (existingPersons) {
+      return existingPersons.id
+    } else {
+      return false
+    }
   }
 
   const updateNum = (person, existingId) => {
@@ -50,6 +63,7 @@ const App = () => {
       server.update(existingId, person)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== existingId ? person : returnedPerson))
+          setNotifMsgInfo(`Updated ${person.name}'s number to ${person.number}`)
         })
     }
   }
@@ -63,24 +77,27 @@ const App = () => {
       return
     }
     if (emptyField(person.name, person.number)) {
-      alert(`Field is empty!`)
+      setNotifMsgInfo(`Field is empty!`, 'error')
       return
     }
     setPersons(persons.concat(person))
     server.create(person)
       .then(returnedContact => {
         setPersons(persons.concat(returnedContact))
+        setNotifMsgInfo(`Added ${person.name} to the phonebook`)
       })
   }
 
   const toggleDeletePerson = id => {
     if (window.confirm('Do you really want to delete?')) {
+      const personToDelete = persons.find(person => person.id === id)
       server.deletePerson(id)
         .then(deletedContact => {
+          setNotifMsgInfo(`${personToDelete.name} has been deleted from the phonebook`)
           setPersons(persons.filter(person => person.id !== id))
       })
         .catch(error => {
-          alert(`this contact has already been deleted`)
+          setNotifMsgInfo(`${personToDelete.name} has already been deleted`, 'error')
           setPersons(persons.filter(person => person.id !== id))
       })
     }
@@ -89,6 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notif={notifMsg} />
       <Filter searchChange={handleSearchInputChange} />
       <h3>Add a new</h3>
       <PersonForm 
