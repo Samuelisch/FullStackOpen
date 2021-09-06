@@ -12,28 +12,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :c
 
 morgan.token('content', function(req, res) { return JSON.stringify(req.body)})
 
-let persons = [
-  { 
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-]
+let persons = []
 
 app.get('/info', (request, response) => {
   const num = persons.length
@@ -60,8 +39,10 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  person = persons.filter(person => person.id !== id)
+  const idNum = Number(request.params.id)
+  Person.deleteOne({ id: idMum}, () => {
+    if (err) return err
+  }) 
 
   response.status(204).end()
 })
