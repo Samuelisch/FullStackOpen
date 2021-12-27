@@ -7,7 +7,7 @@ import Notification from './components/notifications'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
-  const [newSearch, setSearch] = useState('');
+  const [ newSearch, setSearch ] = useState('');
   const [ newName, setNewName ] = useState('');
   const [ newNum, setNewNum ] = useState('');
   const [ showAll, setShowAll ] = useState(true);
@@ -60,10 +60,15 @@ const App = () => {
 
   const updateNum = (person, existingId) => {
     if (window.confirm(`${person.name} is already in this phonebook, replace with new number?`)) {
+      const oldPerson = persons.find(person => person.id === existingId)
+      person.oldNumber = oldPerson.number
       server.update(existingId, person)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== existingId ? person : returnedPerson))
           setNotifMsgInfo(`Updated ${person.name}'s number to ${person.number}`)
+        })
+        .catch(err => {
+          setNotifMsgInfo(err.response.data.error, 'error')
         })
     }
   }
@@ -80,12 +85,12 @@ const App = () => {
       setNotifMsgInfo(`Field is empty!`, 'error')
       return
     }
-    setPersons(persons.concat(person))
     server.create(person)
       .then(returnedContact => {
         setPersons(persons.concat(returnedContact))
         setNotifMsgInfo(`Added ${person.name} to the phonebook`)
       })
+      .catch(err => setNotifMsgInfo(err.response.data.error, 'error'))
   }
 
   const toggleDeletePerson = id => {
