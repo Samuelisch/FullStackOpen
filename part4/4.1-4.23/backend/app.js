@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./utils/config');
-const Blog = require('./models/blog');
+const middleware = require('./utils/middleware')
 const logger = require('./utils/logger');
+const Blog = require('./models/blog');
 
 const app = express();
 
 logger.info('connecting to', config.MONGODB_URI)
+
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
     logger.info('connected to MONGODB');
@@ -18,6 +20,7 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(cors());
 app.use(express.json());
+app.use(middleware.requestLogger);
 
 app.get('/api/blogs', (request, response) => {
   Blog
@@ -32,9 +35,14 @@ app.post('/api/blogs', (request, response) => {
 
   blog
     .save()
-    .then((result) => {
-      response.status(201).json(result);
-    });
+    .then((savedBlog) => savedBlog.toJSON())
+    .then((savedAndFormattedBlog) => {
+      response.json(savedAndFormattedBlog);
+    })
+    .catch(error => logger.error('failed to post', error.message))
 });
+
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;
