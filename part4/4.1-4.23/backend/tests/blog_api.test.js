@@ -169,9 +169,6 @@ describe('updating a blog', () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
     const updatedBlog = {
-        title: "React patterns",
-        author: "Michael Chan",
-        url: "https://reactpatterns.com/",
         likes: 18,
     }
 
@@ -185,14 +182,13 @@ describe('updating a blog', () => {
     expect(blogsAtEnd.length).toEqual(blogsAtStart.length)
   })
 
-  test('title changes when request is valid with different title', async () => {
+  test('succeeds when multiple values changed', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
     const updatedBlog = {
         title: "TypeScript patterns",
-        author: "Michael Chan",
-        url: "https://reactpatterns.com/",
-        likes: 18,
+        url: "https://typescriptpatterns.com/",
+        likes: 20,
     }
 
     await api
@@ -203,7 +199,25 @@ describe('updating a blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
     const titles = blogsAtEnd.map(b => b.title)
+    const urls = blogsAtEnd.map(b => b.url)
     expect(titles).toContain('TypeScript patterns')
+    expect(urls).toContain('https://typescriptpatterns.com/')
+  })
+
+  test('fails with code 400 if invalid id', async () => {
+    const invalidId = '3hfbnf4iuf2348948942fh248'
+
+    await api
+      .get(`/api/blogs/${invalidId}`)
+      .expect(400)
+  })
+
+  test('fails with code 404 if non exisitng id', async () => {
+    const nonExistingIdBlog = await helper.nonExistingId()
+
+    await api
+      .get(`/api/blogs/${nonExistingIdBlog}`)
+      .expect(404)
   })
 })
 
