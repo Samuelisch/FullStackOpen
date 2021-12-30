@@ -1,4 +1,4 @@
-const listHelper = require('./test_helper');
+const listHelper = require('./list_helper');
 
 const listWithOneBlog = [
   {
