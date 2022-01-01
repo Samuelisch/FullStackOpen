@@ -69,10 +69,7 @@ describe('addition of new blog', () => {
   
     await api
       .post('/api/blogs')
-<<<<<<< HEAD
-=======
       .set('Authorization', `bearer ${token}`)
->>>>>>> e4135ef (added authorization to tests, new tests to test token authorization, deleted list helper and list tests)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
