@@ -3,9 +3,11 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 let server;
+let token;
 
 beforeAll(() => {
   //get application to manually bound to a port so we can close connections manually
@@ -15,10 +17,23 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
+  const newUser = {
+    username: 'testuser',
+    name: 'Test User',
+    password: 'testuser'
+  }
+
+  await User.deleteMany({})
+  await api.post('/api/users').send(newUser)
+  const loginDetails = await api.post('/api/login').send(newUser)
+  token = loginDetails.body.token
+
   await Blog.deleteMany({})
   for (let blog of helper.initialBlogs) {
-    let blogObj = new Blog(blog)
-    await blogObj.save()
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(blog)
   }
 })
 
@@ -50,14 +65,11 @@ describe('addition of new blog', () => {
       author: 'Samuel Chan',
       url: 'https://whywhatwhenhow.com',
       likes: 10,
-      userId: '61cebf00bfd7e5308dc820db'
     }
-
-    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbXVlbGlzY2giLCJpZCI6IjYxY2ViZjAwYmZkN2U1MzA4ZGM4MjBkYiIsImlhdCI6MTY0MTAxNDEwMiwiZXhwIjoxNjQxMDE3NzAyfQ.S4zSbQzdIL6gCUVGSFJknuKQn_o_fAUj96z0JIVZvf4'
   
     await api
       .post('/api/blogs')
-      .set('Authorization', token)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -77,6 +89,7 @@ describe('addition of new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(400)
 
@@ -93,6 +106,7 @@ describe('addition of new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(400)
 
@@ -109,6 +123,7 @@ describe('addition of new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(400)
 
@@ -125,6 +140,7 @@ describe('addition of new blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -133,6 +149,41 @@ describe('addition of new blog', () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
     const titles = blogsAtEnd.map(blog => blog.title)
     expect(titles).toContain('Why What When How')
+  })
+
+  test('blog without token will fail and return 401 error', async () => {
+    const newBlog = {
+      title: 'Why What When How',
+      author: 'Samuel Chan',
+      url: 'https://whywhatwhenhow.com',
+      likes: 10,
+    }
+  
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('blog with wrong token will fail and return 401 error', async () => {
+    const newBlog = {
+      title: 'Why What When How',
+      author: 'Samuel Chan',
+      url: 'https://whywhatwhenhow.com',
+      likes: 10,
+    }
+  
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer wrongtoken13413`)
+      .send(newBlog)
+      .expect(401)
+  
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 })
 
@@ -232,17 +283,41 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(
-      helper.initialBlogs.length - 1
-    )
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
 
     const titles = blogsAtEnd.map(r => r.title)
 
     expect(titles).not.toContain(blogToDelete.title)
+  })
+
+  test('fails with code 401 if token is missing', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('fails with code 401 if token is not correct', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ofwrongtoken134134`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 })
 
