@@ -49,11 +49,15 @@ describe('addition of new blog', () => {
       title: 'Why What When How',
       author: 'Samuel Chan',
       url: 'https://whywhatwhenhow.com',
-      likes: 10
+      likes: 10,
+      userId: '61cebf00bfd7e5308dc820db'
     }
+
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbXVlbGlzY2giLCJpZCI6IjYxY2ViZjAwYmZkN2U1MzA4ZGM4MjBkYiIsImlhdCI6MTY0MTAxNDEwMiwiZXhwIjoxNjQxMDE3NzAyfQ.S4zSbQzdIL6gCUVGSFJknuKQn_o_fAUj96z0JIVZvf4'
   
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
