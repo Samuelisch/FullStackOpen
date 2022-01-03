@@ -1,6 +1,23 @@
-import React from "react"
+import React, { useState } from "react"
 
-const BlogForm = ({ submitHandler, title, author, url, setTitle, setAuthor, setUrl }) => {
+const BlogForm = ({ createBlog }) => {
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+
+  const submitHandler = (e) => {
+    e.preventDefault()
+    createBlog({
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl
+    })
+
+    setNewTitle('')
+    setNewAuthor('')
+    setNewUrl('')
+  }
+
   return (
     <div>
       <h2>Add Blog</h2>
@@ -11,8 +28,8 @@ const BlogForm = ({ submitHandler, title, author, url, setTitle, setAuthor, setU
             type="text"
             id="title"
             name="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
           />
         </div>
         <div>
@@ -21,8 +38,8 @@ const BlogForm = ({ submitHandler, title, author, url, setTitle, setAuthor, setU
             type="text"
             id="author"
             name="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
           />
         </div>
         <div>
@@ -31,8 +48,8 @@ const BlogForm = ({ submitHandler, title, author, url, setTitle, setAuthor, setU
             type="text"
             id="url"
             name="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
+            value={newUrl}
+            onChange={({ target }) => setNewUrl(target.value)}
           />
         </div>
         <button type="submit">Add blog</button>

@@ -5,19 +5,15 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState({
       text: null,
       isError: null
     })
 
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
@@ -46,21 +42,16 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
+  const handleLogin = async (credentials) => {
 
     try {
-      const user = await loginService.login({
-        username, password,
-      })
+      const user = await loginService.login(credentials)
 
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setNotificationMessage({
         text: 'Wrong username or password',
@@ -78,15 +69,7 @@ const App = () => {
     })
   }
 
-  const addBlog = async (e) => {
-    e.preventDefault()
-
-    const newBlog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
+  const addBlog = async (newBlog) => {
     try {
       const returnedBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(returnedBlog))
@@ -94,9 +77,6 @@ const App = () => {
         text: `New Blog ${returnedBlog.title} by ${returnedBlog.author} has been added`,
         isError: false
       })
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
     } catch (exception) {
       setNotificationMessage({
         text: 'Required field missing',
@@ -114,28 +94,18 @@ const App = () => {
       />
 
       {user === null ? 
-        <LoginForm 
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          submitHandler={handleLogin}
-        /> 
+        <Togglable buttonLabel="login">
+          <LoginForm handleLogin={handleLogin} />
+        </Togglable>
         : 
         <div>
           <div>
             Logged in as {user.name}
             <button onClick={handleLogout}>logout</button>
           </div>
-          <BlogForm 
-            title={newTitle}
-            author={newAuthor}
-            url={newUrl}
-            setTitle={setNewTitle}
-            setAuthor={setNewAuthor}
-            setUrl={setNewUrl}
-            submitHandler={addBlog}
-          />
+          <Togglable buttonLabel="new blog">
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
         </div>
       }
 
