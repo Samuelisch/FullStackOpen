@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('')
@@ -6,40 +7,44 @@ const LoginForm = ({ handleLogin }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    handleLogin({username, password})
-    
+    handleLogin({ username, password })
+
     setUsername('')
     setPassword('')
   }
 
   return (
-    <div>      
-        <h2>Login</h2>
-        <form onSubmit={submitHandler}>
-          <div>
-            <label htmlFor="username">Username: </label>
-            <input 
-              type="text"
-              id="username"
-              name="username"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="password">Password: </label>
-            <input 
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={submitHandler}>
+        <div>
+          <label htmlFor="username">Username: </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password: </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+        </div>
+        <button type="submit">login</button>
+      </form>
     </div>
   )
+}
+
+LoginForm.propTypes = {
+  handleLogin: PropTypes.func.isRequired,
 }
 
 export default LoginForm

@@ -60,7 +60,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
           }
         </>
       }
-    </StyledContainer>  
+    </StyledContainer>
   )
 }
 

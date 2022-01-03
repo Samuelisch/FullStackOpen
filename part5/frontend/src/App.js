@@ -10,9 +10,9 @@ import Togglable from './components/Togglable'
 const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState({
-      text: null,
-      isError: null
-    })
+    text: null,
+    isError: null
+  })
 
   const [blogs, setBlogs] = useState([])
 
@@ -32,7 +32,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(initialBlogs =>
       setBlogs(initialBlogs)
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogAppUser')
     setNotificationMessage({
-      text: `logged out`,
+      text: 'logged out',
       isError: false
     })
   }
@@ -120,16 +120,16 @@ const App = () => {
   return (
     <div>
       <h1>Blog App</h1>
-      <Notification 
+      <Notification
         message={notificationMessage.text}
         isError={notificationMessage.isError}
       />
 
-      {user === null ? 
+      {user === null ?
         <Togglable buttonLabel="login">
           <LoginForm handleLogin={handleLogin} />
         </Togglable>
-        : 
+        :
         <div>
           <div>
             Logged in as {user.name}
@@ -143,9 +143,9 @@ const App = () => {
 
       <h2>Blogs</h2>
       {orderedBlogs.map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog} 
+        <Blog
+          key={blog.id}
+          blog={blog}
           user={user}
           updateBlog={updateBlog}
           removeBlog={removeBlog}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState('')
@@ -24,7 +24,7 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={submitHandler}>
         <div>
           <label htmlFor="title">Title:</label>
-          <input 
+          <input
             type="text"
             id="title"
             name="title"
@@ -34,7 +34,7 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           <label htmlFor="author">Author:</label>
-          <input 
+          <input
             type="text"
             id="author"
             name="author"
@@ -44,7 +44,7 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           <label htmlFor="url">Url:</label>
-          <input 
+          <input
             type="text"
             id="url"
             name="url"
