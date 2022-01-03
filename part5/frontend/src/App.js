@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -16,6 +16,8 @@ const App = () => {
 
   const [blogs, setBlogs] = useState([])
 
+  const blogFormRef = useRef()
+
   useEffect(() => {
     if (notificationMessage.text) {
       setTimeout(() => {
@@ -23,7 +25,7 @@ const App = () => {
           text: null,
           isError: null
         })
-      }, 5000)
+      }, 3000)
     }
   }, [notificationMessage])
 
@@ -43,7 +45,6 @@ const App = () => {
   }, [])
 
   const handleLogin = async (credentials) => {
-
     try {
       const user = await loginService.login(credentials)
 
@@ -77,6 +78,7 @@ const App = () => {
         text: `New Blog ${returnedBlog.title} by ${returnedBlog.author} has been added`,
         isError: false
       })
+      blogFormRef.current.toggleVisibility()
     } catch (exception) {
       setNotificationMessage({
         text: 'Required field missing',
@@ -84,6 +86,36 @@ const App = () => {
       })
     }
   }
+
+  const updateBlog = async (id, updatedBlog) => {
+    try {
+      const returnedBlog = await blogService.update(id, updatedBlog)
+      setBlogs(blogs.filter(blog => blog.id === id ? returnedBlog : blog))
+    } catch (exception) {
+      setNotificationMessage({
+        text: 'something went wrong',
+        isError: true
+      })
+    }
+  }
+
+  const removeBlog = async (id) => {
+    try{
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      setNotificationMessage({
+        text: 'blog has been removed',
+        isError: false
+      })
+    } catch (exception) {
+      setNotificationMessage({
+        text: 'cannot remove blog',
+        isError: true
+      })
+    }
+  }
+
+  const orderedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   return (
     <div>
@@ -103,15 +135,21 @@ const App = () => {
             Logged in as {user.name}
             <button onClick={handleLogout}>logout</button>
           </div>
-          <Togglable buttonLabel="new blog">
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
         </div>
       }
 
       <h2>Blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {orderedBlogs.map(blog =>
+        <Blog 
+          key={blog.id} 
+          blog={blog} 
+          user={user}
+          updateBlog={updateBlog}
+          removeBlog={removeBlog}
+        />
       )}
     </div>
   )
