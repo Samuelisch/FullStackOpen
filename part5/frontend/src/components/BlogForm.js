@@ -19,7 +19,7 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
+    <div className="formDiv">
       <h2>Add Blog</h2>
       <form onSubmit={submitHandler}>
         <div>
