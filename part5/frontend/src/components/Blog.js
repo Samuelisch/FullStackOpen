@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-const StyledContainer = styled.div`
+const StyledListContainer = styled.li`
   border: 1px solid black;
   margin: 10px;
   padding: 5px;
+  list-style: none;
 
   p {
     margin: 0;
@@ -42,7 +43,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
   }
 
   return (
-    <StyledContainer>
+    <StyledListContainer>
       <StyledDiv>
         <p>{blog.title} by {blog.author}</p>
         <button type="button" onClick={toggleDetails}>view</button>
@@ -60,7 +61,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
           }
         </>
       }
-    </StyledContainer>
+    </StyledListContainer>
   )
 }
 
