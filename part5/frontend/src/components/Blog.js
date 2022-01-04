@@ -53,7 +53,7 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
           <p><a href={blog.url}>{blog.url}</a></p>
           <StyledDiv>
             <p>Likes: {blogLikes}</p>
-            <button type="button" onClick={addLikeToBlog}>Like</button>
+            <button type="button" onClick={addLikeToBlog}>like</button>
           </StyledDiv>
           <p><em>{blog.user[0].username}</em></p>
           {user && matchingIds() &&
