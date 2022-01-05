@@ -46,18 +46,18 @@ const Blog = ({ blog, user, updateBlog, removeBlog }) => {
     <StyledListContainer>
       <StyledDiv>
         <p>{blog.title} by {blog.author}</p>
-        <button type="button" onClick={toggleDetails}>view</button>
+        <button className="viewButton" type="button" onClick={toggleDetails}>{showDetails ? 'hide' : 'view'}</button>
       </StyledDiv>
       {showDetails &&
         <>
           <p><a href={blog.url}>{blog.url}</a></p>
           <StyledDiv>
             <p>Likes: {blogLikes}</p>
-            <button type="button" onClick={addLikeToBlog}>like</button>
+            <button className="likeButton" type="button" onClick={addLikeToBlog}>like</button>
           </StyledDiv>
           <p><em>{blog.user[0].username}</em></p>
           {user && matchingIds() &&
-            <button type="button" onClick={() => removeBlog(blog.id)}>remove</button>
+            <button className="deleteButton" type="button" onClick={() => removeBlog(blog.id)}>remove</button>
           }
         </>
       }

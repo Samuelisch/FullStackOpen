@@ -17,15 +17,18 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
-  const newUser = {
+  const testUser = {
     username: 'testuser',
-    name: 'Test User',
-    password: 'testuser'
+    password: 'test'
   }
 
   await User.deleteMany({})
-  await api.post('/api/users').send(newUser)
-  const loginDetails = await api.post('/api/login').send(newUser)
+  for (let user of helper.initialUsers) {
+    await api
+      .post('/api/users')
+      .send(user)
+  }
+  const loginDetails = await api.post('/api/login').send(testUser)
   token = loginDetails.body.token
 
   await Blog.deleteMany({})
