@@ -1,4 +1,21 @@
-const blogReducer = (state = [], action) => {
+const initialState = [
+  {
+    title: 'reducer defines redux store',
+    author: 'user',
+    url: 'testurl',
+    likes: 0,
+    id: 1
+  },
+  {
+    title: 'state of store can contain any data',
+    author: 'user',
+    url: 'testurl',
+    likes: 0,
+    id: 2
+  }
+]
+
+const blogReducer = (state = initialState, action) => {
   switch(action.type) {
     case 'NEW_BLOG':
       return [...state, action.data]

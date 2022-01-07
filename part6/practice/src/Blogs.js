@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { likeBlog } from "./reducers/noteReducer";
+import { likeBlog } from "./reducers/blogReducer";
 
 const Blog = ({ blog, handleClick}) => {
   return (
@@ -15,7 +15,14 @@ const Blog = ({ blog, handleClick}) => {
 
 const Blogs = () => {
   const dispatch = useDispatch()
-  const blogs = useSelector(state => state)
+  const blogs = useSelector(({ filter, blogs}) => {
+    if (filter === 'ALL') {
+      return blogs
+    }
+    return filter === 'LIKED'
+      ? blogs.filter(blog => blog.likes)
+      : blogs.filter(blog => !blog.likes)
+  })
 
   return (
     <ul>

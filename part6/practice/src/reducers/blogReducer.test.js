@@ -1,4 +1,4 @@
-import blogReducer from "./noteReducer"
+import blogReducer from "./blogReducer"
 import deepFreeze from 'deep-freeze'
 
 describe('blogReducer', () => {

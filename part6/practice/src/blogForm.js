@@ -1,6 +1,6 @@
 import React from "react"
 import { useDispatch } from "react-redux"
-import { createBlog } from "./reducers/noteReducer"
+import { createBlog } from "./reducers/blogReducer"
 
 const NewBlog = (props) => {
   const dispatch = useDispatch()
