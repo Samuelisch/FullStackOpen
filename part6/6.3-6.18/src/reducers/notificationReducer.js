@@ -9,17 +9,19 @@ const notificationReducer = (state=null, action) => {
   }
 }
 
-export const displayNotification = (content) => {
-  return {
-    type: 'DISPLAY',
-    data: content
-  }
-}
-
-export const hideNotification = () => {
-  return {
-    type: 'HIDE',
-    data: null
+export const displayNotification = (content, time) => {
+  return dispatch => {
+    dispatch ({
+      type: 'DISPLAY',
+      data: content
+    })
+    
+    setTimeout(() => {
+      dispatch ({
+        type: 'HIDE',
+        data: null
+      })
+    }, time * 1000)
   }
 }
 
