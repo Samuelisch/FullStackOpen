@@ -9,14 +9,17 @@ const notificationReducer = (state=null, action) => {
   }
 }
 
+let timeout
+
 export const displayNotification = (content, time) => {
+  clearTimeout(timeout)
   return dispatch => {
     dispatch ({
       type: 'DISPLAY',
       data: content
     })
     
-    setTimeout(() => {
+    timeout = setTimeout(() => {
       dispatch ({
         type: 'HIDE',
         data: null
